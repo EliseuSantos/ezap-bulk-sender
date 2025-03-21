@@ -1,0 +1,62 @@
+services:
+  app:
+    container_name: ezap-bulk-dev-app
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    network_mode: host
+    command: >
+      sh -c "
+        npm ci &&
+        npx nx run-many --target=serve --projects=ezap-bulk-sender-api,ezap-bulk-sender-front --parallel
+      "
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+    depends_on:
+      - redis
+      - postgres
+      - rabbitmq
+
+  redis:
+    image: redis:7-alpine
+    container_name: whatsapp-redis
+    ports:
+      - '6379:6379'
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: redis-ui
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    ports:
+      - '8081:8081'
+    depends_on:
+      - redis
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: whatsapp-rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: whatsapp-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: whatsapp
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
