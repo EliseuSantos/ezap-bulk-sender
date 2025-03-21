@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "nodenext", // 💥 ESSENCIAL!
+    "target": "ESNext",
+    "allowJs": true,
+    "checkJs": true,
+    "esModuleInterop": true,
+    "moduleDetection": "force",
+    "baseUrl": "."
+  },
+  "include": ["src"]
+}

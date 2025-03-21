@@ -1,0 +1,19 @@
+{
+  "name": "ezap-bulk-sender-api",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run dev --workspace=ezap-bulk-sender-api",
+        "cwd": "apps/backend"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run build --workspace=ezap-bulk-sender-front",
+        "cwd": "apps/backend"
+      }
+    }
+  }
+}
