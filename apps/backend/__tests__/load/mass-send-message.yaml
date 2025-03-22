@@ -1,0 +1,84 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - name: "Warm-up"
+      duration: 30
+      arrivalRate: 5
+    - name: "Ramp-up"
+      duration: 60
+      arrivalRate: 10
+      rampTo: 50
+    - name: "Sustained load"
+      duration: 90
+      arrivalRate: 50
+    - name: "Spike"
+      duration: 20
+      arrivalRate: 100
+    - name: "Cooldown"
+      duration: 30
+      arrivalRate: 5
+
+  payload:
+    path: "./clients.csv"
+    fields:
+      - clientId
+      - plan
+
+  defaults:
+    headers:
+      Authorization: "Bearer be26cb58cdf79560ac6bf44229f7aebd4c2af1306b81287a4cfc3ec4df59b77a"
+      Content-Type: "application/json"
+
+  environments:
+    local:
+      target: "http://localhost:3000"
+
+  http:
+    timeout: 20
+    discardResponseBodies: true
+    maxSockets: 100
+
+  ensure:
+    maxErrorRate: 1
+    maxAvgResponseTime: 1000
+
+scenarios:
+  - name: "Enviar mensagem para cliente básico"
+    flow:
+      - log: "Enviando mensagem para {{ clientId }} (basic)"
+      - post:
+          url: "/send-message"
+          json:
+            phone: "5599999999999"
+            message: "Mensagem para {{ clientId }}"
+          capture:
+            - json: "status"
+              as: "status"
+          expect:
+            - statusCode: 200
+
+  - name: "Enviar mensagem para cliente pro"
+    weight: 2
+    flow:
+      - log: "Cliente Pro: {{ clientId }}"
+      - think: 1
+      - post:
+          url: "/send-message"
+          json:
+            phone: "5588888888888"
+            message: "Mensagem especial para {{ clientId }} (pro)"
+          expect:
+            - statusCode: 200
+
+  - name: "Enviar mensagem para cliente enterprise"
+    weight: 3
+    flow:
+      - log: "Cliente Enterprise: {{ clientId }}"
+      - think: 0.5
+      - post:
+          url: "/send-message"
+          json:
+            phone: "5577777777777"
+            message: "Mensagem VIP para {{ clientId }} (enterprise)"
+          expect:
+            - statusCode: 200
