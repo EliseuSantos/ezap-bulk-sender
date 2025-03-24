@@ -19,8 +19,8 @@ export function QRCodeBox() {
   });
 
   return (
-    <div className="w-full h-[250px] border rounded-md p-4 bg-background flex flex-col items-center justify-center">
-      <h2 className="text-sm font-semibold mb-2">QR Code</h2>
+    <div className="w-full h-[250px] border dark:bg-white rounded-md p-4 bg-background flex flex-col items-center justify-center">
+      <h2 className="text-sm font-semibold mb-2 dark:text-black">QR Code</h2>
 
       {isLoading ? (
         <div className="flex items-center justify-center h-[calc(100%-20px)] w-full">

@@ -7,20 +7,20 @@ import {
   ChatBubble,
   ChatBubbleAvatar,
   ChatBubbleMessage,
-  // ChatBubbleAction,
+  ChatBubbleAction,
 } from "./chat-bubble";
 import { ChatInput } from "./chat-input";
 import { ChatMessageList } from "./chat-message-list";
 import { useMutation } from "@tanstack/react-query";
 import { useContacts } from "@/context/contacts-context";
 
-// const ChatIcons = [
-// 	{ icon: RefreshCcw, label: "Refresh" },
-// ];
+const ChatIcons = [
+	{ icon: RefreshCcw, label: "Refresh" },
+];
 
 export function ChatWindow() {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
   const [input, setInput] = useState("");
 
   const { contacts } = useContacts();
@@ -62,21 +62,31 @@ export function ChatWindow() {
       message: input,
     });
 
-    try {
-      for (const contact of contacts) {
-        await new Promise((res) => setTimeout(res, 300));
-      }
-    } catch (err) {
-      console.error("Erro ao enviar mensagens:", err);
-    }
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "user",
+        content: input,
+      },
+    ]);
+    setInput('')
 
     setIsGenerating(false);
+    // try {
+    //   for (const contact of contacts) {
+    //     await new Promise((res) => setTimeout(res, 300));
+    //   }
+    // } catch (err) {
+    //   console.error("Erro ao enviar mensagens:", err);
+    // }
+
+
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (isGenerating || !input) return;
+      if (isGenerating) return;
       setIsGenerating(true);
       onSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
     }
@@ -110,39 +120,26 @@ export function ChatWindow() {
             </div>
           )}
 
-          {messages.map((message, index) => (
-            <ChatBubble
-              key={index}
-              variant={message?.["role"] === "user" ? "sent" : "received"}
-            >
-              <ChatBubbleAvatar
-                src=""
-                fallback={message?.["role"] === "user" ? "👤" : "🤖"}
-              />
-              <ChatBubbleMessage>
-                {/* {message?.['role'] === "api" &&
-									messages.length - 1 === index && (
-										<div className="flex items-center mt-1.5 gap-1">
-											{!isGenerating &&
-												ChatIcons.map((icon, i) => {
-													const Icon = icon.icon;
-													return (
-														<ChatBubbleAction
-															key={i}
-															variant="outline"
-															className="size-5"
-															icon={<Icon className="size-3" />}
-															onClick={() =>
-																handleActionClick(icon.label, index)
-															}
-														/>
-													);
-												})}
-										</div>
-									)} */}
-              </ChatBubbleMessage>
-            </ChatBubble>
-          ))}
+          {/* Messages */}
+          {messages &&
+            messages.map((message, index) => (
+              <ChatBubble
+                key={index}
+                variant={message.role == "user" ? "sent" : "received"}
+              >
+                <ChatBubbleAvatar
+                  src=""
+                  fallback={message.role == "user" ? "👨🏽" : "🤖"}
+                />
+                <ChatBubbleMessage>
+                  {message.content
+                    .split("```")
+                    .map((part: string, index: number) => {
+                      return part;
+                    })}
+                </ChatBubbleMessage>
+              </ChatBubble>
+            ))}
 
           {isGenerating && (
             <ChatBubble variant="received">
