@@ -16,7 +16,7 @@
   "devDependencies": {
     "@nx/devkit": "20.6.2",
     "@nx/js": "20.6.2",
-    "@nx/next": "^20.6.2",
+    "@nx/next": "^21.4.1",
     "@nx/node": "20.6.2",
     "@nx/playwright": "20.6.2",
     "@nx/web": "20.6.2",
@@ -45,7 +45,7 @@
   "dependencies": {
     "axios": "^1.8.4",
     "express": "^4.21.2",
-    "next": "~15.1.4",
+    "next": "~15.5.2",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   }
